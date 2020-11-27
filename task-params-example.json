@@ -1,11 +1,4 @@
 {
-  "capacityProviderStrategy": [
-    {
-      "capacityProvider": "string",
-      "weight": 123,
-      "base": 123
-    }
-  ],
   "count": 1,
   "enableECSManagedTags": true,
   "group": "",

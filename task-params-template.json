@@ -1,5 +1,4 @@
 {
-  "capacityProviderStrategy": [],
   "cluster": null,
   "count": 1,
   "enableECSManagedTags": true,
