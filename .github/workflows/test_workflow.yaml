@@ -15,5 +15,5 @@ jobs:
         aws_default_region: ${{secrets.AWS_DEFAULT_REGION}}
         github_pat: ${{ secrets.GITHUB_TOKEN }}
         task_definition: 'gh-runner'
-        cluster: 'ops-cluster'
+        ecs_cluster: 'ops-jobs'
 

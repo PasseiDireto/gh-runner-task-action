@@ -34,7 +34,6 @@ jobs:
           make check
       - name: Install dependencies
         run: |
-          pip install .
           pip install -r requirements/test.txt
       - name: Test with pytest
         run: |

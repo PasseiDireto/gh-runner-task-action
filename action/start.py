@@ -8,4 +8,4 @@ from rich.console import Console
 
 if __name__ == "__main__":
     console = Console()
-    console.print(os.environ)
+    console.print([var for var in os.environ if var.startswith("INPUT_")])
