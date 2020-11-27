@@ -10,10 +10,13 @@ jobs:
     - uses: actions/checkout@v2
     - uses: ./
       with:
-        aws_access_key_id: ${{ secrets.CDK_ACCESS_ID }}
-        aws_secret_access_key: ${{ secrets.CDK_SECRET_KEY }}
-        aws_default_region: ${{secrets.AWS_DEFAULT_REGION}}
         github_pat: ${{ secrets.GITHUB_TOKEN }}
         task_definition: 'gh-runner'
         ecs_cluster: 'ops-jobs'
+        task_params_file: 'task-params-example.json'
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.CDK_ACCESS_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.CDK_SECRET_KEY }}
+        AWS_DEFAULT_REGION:  ${{secrets.AWS_DEFAULT_REGION}}
+
 

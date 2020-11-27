@@ -1,15 +1,6 @@
 name: 'Starts a GitHub Self Hosted Runner '
 description: 'Greet someone and record the time'
 inputs:
-  aws_access_key_id:
-    description: 'AWS_ACCESS_KEY_ID of the authorized user'
-    required: true
-  aws_secret_access_key:
-    description: 'AWS_SECRET_ACCESS_KEY of the authorized user'
-    required: true
-  aws_default_region:
-    description: 'AWS_DEFAULT_REGION of the authorized user'
-    required: true
   github_pat:
     description: 'GitHub Personal Access Token used in Runner Registration'
     required: true
@@ -35,6 +26,10 @@ inputs:
     required: false
   execution_role_arn:
     description: 'ARN of the role used during task execution'
+    required: false
+  task_params_file:
+    description: 'JSON file (path) with extra configurations'
+    default: 'task-params.json'
     required: false
 outputs:
   task_id:
