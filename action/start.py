@@ -15,8 +15,8 @@ if __name__ == "__main__":
     console.print("general data: ", general_data)
     console.print("input data: ", input_data)
     task_params_file = os.environ.get("INPUT_TASK_PARAMS_FILE")
-    base_config = {}
+    base_config = json.loads(open("./task-params-template.json").read())
     if task_params_file and os.path.exists(task_params_file):
-        base_config = json.loads(open(task_params_file).read())
+        base_config.update(json.loads(open(task_params_file).read()))
     console.print(base_config)
-    client = ecr_client = boto3.client("ecr")
+    ecr = boto3.client("ecr")

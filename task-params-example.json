@@ -1,7 +1,13 @@
 {
-  "capacityProviderStrategy": [],
+  "capacityProviderStrategy": [
+    {
+      "capacityProvider": "string",
+      "weight": 123,
+      "base": 123
+    }
+  ],
   "cluster": "string",
-  "count": 1,
+  "count": 123,
   "enableECSManagedTags": true,
   "group": "string",
   "launchType": "FARGATE",
