@@ -25,4 +25,5 @@ disable = line-too-long, # let's black handle this one,
           docstring-first-line-empty,
           no-self-use,
           too-few-public-methods,
-          trailing-whitespace
+          trailing-whitespace,
+          missing-function-docstring
