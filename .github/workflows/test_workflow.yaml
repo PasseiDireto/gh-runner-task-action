@@ -12,7 +12,7 @@ jobs:
       with:
         github_pat: ${{ secrets.GITHUB_TOKEN }}
         task_definition: 'gh-runner'
-        ecs_cluster: 'ops-jobs'
+        cluster: 'ops-jobs'
         task_params_file: 'task-params-example.json'
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.CDK_ACCESS_ID }}

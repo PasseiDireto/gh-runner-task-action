@@ -31,7 +31,7 @@
       }
     ],
     "cpu": "2048",
-    "memory": "4096",
+    "memory": "4096"
   },
   "placementConstraints": [],
   "placementStrategy": [],
