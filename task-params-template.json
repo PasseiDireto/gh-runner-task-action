@@ -3,7 +3,7 @@
   "cluster": null,
   "count": 1,
   "enableECSManagedTags": true,
-  "group": null,
+  "group": "",
   "launchType": "FARGATE",
   "networkConfiguration": {
     "awsvpcConfiguration": {
@@ -15,7 +15,7 @@
   "overrides": {
     "containerOverrides": [
       {
-        "name": null,
+        "name": "runner",
         "command": [],
         "environment": [],
         "environmentFiles": [],
@@ -25,18 +25,18 @@
         "resourceRequirements": []
       }
     ],
-    "cpu": 2048,
-    "memory": 4096,
+    "cpu": "2048",
+    "memory": "4096",
     "inferenceAcceleratorOverrides": [],
-    "executionRoleArn": null,
-    "taskRoleArn": null
+    "executionRoleArn": "",
+    "taskRoleArn": ""
   },
   "placementConstraints": [],
   "placementStrategy": [],
-  "platformVersion": null,
+  "platformVersion": "LATEST",
   "propagateTags": "TASK_DEFINITION",
-  "referenceId": null,
-  "startedBy": null,
+  "referenceId": "",
+  "startedBy": "",
   "tags": [],
   "taskDefinition": null
 }

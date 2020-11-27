@@ -6,29 +6,22 @@
       "base": 123
     }
   ],
-  "cluster": "string",
-  "count": 123,
+  "count": 1,
   "enableECSManagedTags": true,
-  "group": "string",
+  "group": "",
   "launchType": "FARGATE",
   "networkConfiguration": {
     "awsvpcConfiguration": {
-      "subnets": [
-        "string"
-      ],
-      "securityGroups": [
-        "string"
-      ],
+      "subnets": [],
+      "securityGroups": [],
       "assignPublicIp": "ENABLED"
     }
   },
   "overrides": {
     "containerOverrides": [
       {
-        "name": "string",
-        "command": [
-          "string"
-        ],
+        "name": "runner",
+        "command": [],
         "environment": [],
         "environmentFiles": [],
         "cpu": 2048,
@@ -37,23 +30,19 @@
         "resourceRequirements": []
       }
     ],
-    "cpu": "string",
-    "inferenceAcceleratorOverrides": [],
-    "executionRoleArn": "string",
-    "memory": "string",
-    "taskRoleArn": "string"
+    "cpu": "2048",
+    "memory": "4096",
   },
   "placementConstraints": [],
   "placementStrategy": [],
-  "platformVersion": "string",
+  "platformVersion": "LATEST",
   "propagateTags": "TASK_DEFINITION",
-  "referenceId": "string",
-  "startedBy": "string",
+  "referenceId": "",
+  "startedBy": "",
   "tags": [
     {
-      "key": "string",
-      "value": "string"
+      "key": "environment",
+      "value": "dev"
     }
   ],
-  "taskDefinition": "string"
 }
