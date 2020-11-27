@@ -1,0 +1,44 @@
+name: 'Starts a GitHub Self Hosted Runner '
+description: 'Greet someone and record the time'
+inputs:
+  aws_access_key_id:
+    description: 'AWS_ACCESS_KEY_ID of the authorized user'
+    required: true
+  aws_secret_access_key:
+    description: 'AWS_SECRET_ACCESS_KEY of the authorized user'
+    required: true
+  aws_default_region:
+    description: 'AWS_DEFAULT_REGION of the authorized user'
+    required: true
+  github_pat:
+    description: 'GitHub Personal Access Token used in Runner Registration'
+    required: true
+  task_definition:
+    description: 'The name of the task definition'
+    required: true
+    default: 'gh-runner'
+  ecs_cluster:
+    description: 'The name of the ECS cluster where the task should be placed'
+    required: true
+  wait:
+    description: 'Whether the action should wait until the task is in state RUNNING before finishing'
+    required: true
+    default: 'true'
+  subnets:
+    description: 'comma separated list of subnets to attach into the execution'
+    required: false
+  security_groups:
+    description: 'comma separated list of Security Groups to attach into the execution'
+    required: false
+  task_role_arn:
+    description: 'ARN of the role used to instantiate the task'
+    required: false
+  execution_role_arn:
+    description: 'ARN of the role used during task execution'
+    required: false
+outputs:
+  task_id:
+    description: 'The ID of the task in execution'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'

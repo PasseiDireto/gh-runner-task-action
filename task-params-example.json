@@ -1,0 +1,53 @@
+{
+  "capacityProviderStrategy": [],
+  "cluster": "string",
+  "count": 1,
+  "enableECSManagedTags": true,
+  "group": "string",
+  "launchType": "FARGATE",
+  "networkConfiguration": {
+    "awsvpcConfiguration": {
+      "subnets": [
+        "string"
+      ],
+      "securityGroups": [
+        "string"
+      ],
+      "assignPublicIp": "ENABLED"
+    }
+  },
+  "overrides": {
+    "containerOverrides": [
+      {
+        "name": "string",
+        "command": [
+          "string"
+        ],
+        "environment": [],
+        "environmentFiles": [],
+        "cpu": 2048,
+        "memory": 4096,
+        "memoryReservation": 4096,
+        "resourceRequirements": []
+      }
+    ],
+    "cpu": "string",
+    "inferenceAcceleratorOverrides": [],
+    "executionRoleArn": "string",
+    "memory": "string",
+    "taskRoleArn": "string"
+  },
+  "placementConstraints": [],
+  "placementStrategy": [],
+  "platformVersion": "string",
+  "propagateTags": "TASK_DEFINITION",
+  "referenceId": "string",
+  "startedBy": "string",
+  "tags": [
+    {
+      "key": "string",
+      "value": "string"
+    }
+  ],
+  "taskDefinition": "string"
+}

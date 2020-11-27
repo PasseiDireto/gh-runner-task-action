@@ -1,0 +1,17 @@
+# Check if the action is actually working (Temporary)
+
+name: Run Action
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: ./
+      with:
+        aws_access_key_id: ${{ secrets.CDK_ACCESS_ID }}
+        aws_secret_access_key: ${{ secrets.CDK_SECRET_KEY }}
+        aws_default_region: ${{secrets.AWS_DEFAULT_REGION}}
+        github_pat: ${{ secrets.GITHUB_TOKEN }}
+        task_definition: 'gh-runner'
+        cluster: 'ops-cluster'
+

@@ -1,0 +1,28 @@
+# Looks like setup.cfg cannot load the extensions in the precommit,
+# but that the pylintrc file can
+# This happens even when specifying --rcfile=setup.cfg
+# Possible bug from pylint?
+[MASTER]
+load-plugins = pylint.extensions.docparams, pylint.extensions.docstyle, pylint.extensions.mccabe
+
+[BASIC]
+good-names=
+    i,
+    e,
+    logger,
+
+[LOGGING]
+logging-format-style=new
+logging-fstring-interpolation=no
+
+[FORMAT]
+max-line-length = 88
+
+[MESSAGES CONTROL]
+disable = line-too-long, # let's black handle this one,
+          import-error,
+          logging-fstring-interpolation,
+          docstring-first-line-empty,
+          no-self-use,
+          too-few-public-methods,
+          trailing-whitespace

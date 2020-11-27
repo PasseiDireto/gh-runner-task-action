@@ -1,0 +1,41 @@
+name: Static check code and run tests
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+jobs:
+  check_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+      - name: Set up Python Env
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Store/Retrieve pip's cache folder
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements/*.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+            ${{ runner.os }}-
+      - name: Upgrade pip
+        run: |
+          pip install pip --upgrade
+      - name: Static Checker
+        run: |
+          pip install -r requirements/check.txt
+          make check
+      - name: Install dependencies
+        run: |
+          pip install .
+          pip install -r requirements/test.txt
+      - name: Test with pytest
+        run: |
+          make test

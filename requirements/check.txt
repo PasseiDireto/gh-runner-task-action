@@ -1,0 +1,6 @@
+flake8==3.8.*
+black==20.8b1
+isort==5.5.*
+pylint==2.6.*
+bandit==1.6.*
+mypy==0.790
