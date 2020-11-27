@@ -5,7 +5,9 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
+    - uses: actions/checkout@v2
     - uses: ./
       with:
         aws_access_key_id: ${{ secrets.CDK_ACCESS_ID }}
