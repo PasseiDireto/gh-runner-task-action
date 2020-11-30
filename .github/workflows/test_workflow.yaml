@@ -8,12 +8,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: ./
+    - name: Test Trigger
+      uses: ./
       with:
         github_pat: ${{ secrets.GITHUB_TOKEN }}
         task_definition: 'gh-runner'
         cluster: 'ops-jobs'
         task_params_file: 'task-params-example.json'
+        subnets: ${{ secrets.AWS_DEFAULT_SUBNETS }}
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.CDK_ACCESS_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.CDK_SECRET_KEY }}

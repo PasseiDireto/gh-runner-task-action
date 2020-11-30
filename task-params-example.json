@@ -1,7 +1,6 @@
 {
   "count": 1,
   "enableECSManagedTags": true,
-  "group": "",
   "launchType": "FARGATE",
   "networkConfiguration": {
     "awsvpcConfiguration": {
