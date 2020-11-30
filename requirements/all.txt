@@ -1,4 +1,4 @@
 -r check.txt
 -r test.txt
--r docs.txt
+-r run.txt
 -r build.txt

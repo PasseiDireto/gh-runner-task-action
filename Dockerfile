@@ -7,11 +7,9 @@ ENV TERM "xterm-256color"
 RUN pip install pip --upgrade
 RUN pip install --target=/app -r requirements.txt
 
-ADD action /app
+ADD . /app
 
-#FROM gcr.io/distroless/python3-debian10:3.9
-#COPY --from=builder /app /app
 WORKDIR /app
 ENV PYTHONPATH /app
 
-CMD ["python", "/app/start.py"]
+CMD ["python", "/app/action/start.py"]

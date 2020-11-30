@@ -17,7 +17,7 @@ inputs:
     default: 'true'
   subnets:
     description: 'comma separated list of subnets to attach into the execution'
-    required: false
+    required: true
   security_groups:
     description: 'comma separated list of Security Groups to attach into the execution'
     required: false

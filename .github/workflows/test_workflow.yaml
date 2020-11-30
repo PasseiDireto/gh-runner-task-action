@@ -3,7 +3,7 @@
 name: Run Action
 on: [push, pull_request]
 jobs:
-  build:
+  pre-job-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,5 +20,12 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.CDK_ACCESS_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.CDK_SECRET_KEY }}
         AWS_DEFAULT_REGION:  ${{secrets.AWS_DEFAULT_REGION}}
-
-
+  build:
+    runs-on: self-hosted
+    needs: pre-job-test
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+    - run: python --version
