@@ -26,7 +26,7 @@ logging.basicConfig(
 install()
 logger = logging.getLogger("main")
 
-if not __name__ == "__main__":
+if __name__ != "__main__":
     sys.exit(0)
 
 env = os.environ
@@ -36,7 +36,7 @@ config = Config(task_params_file)
 logger.info(
     f"Start task execution with defition '{config.task_definition}' on cluster '{config.cluster}'"
 )
-config.set_repository(env.get("GITHUB_REPOSITORY"))
+config.set_repository(env["GITHUB_REPOSITORY"])
 config.set(
     **input.as_dict(),
     group=f"gh-runner:{config.repository}",

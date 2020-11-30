@@ -47,7 +47,7 @@ class Task:
 
     @property
     def url(self):
-        base_url = "https://us-east-2.console.aws.amazon.com/ecs/home#/clusters"
+        base_url = "https://console.aws.amazon.com/ecs/home#/clusters"
         return f"{base_url}/{self.config.cluster}/tasks/{self.task_id}/details"
 
     @property
