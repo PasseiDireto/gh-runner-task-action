@@ -55,4 +55,5 @@ if __name__ == "__main__":
     console.print(base_config)
     ecr = boto3.client("ecs")
     console.print(base_config)
-    ecr.run_task(**base_config)
+    response = ecr.run_task(**base_config)
+    console.print(response)
