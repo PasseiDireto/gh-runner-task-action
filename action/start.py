@@ -36,12 +36,13 @@ if __name__ == "__main__":
     for key, value in input_data.items():
         if key in base_config:
             base_config[key] = value
-    base_config["group"] = f"gh-runner:{general_data['GITHUB_REPOSITORY']}"
+    repo = general_data["GITHUB_REPOSITORY"].split("/")[1]
+    base_config["group"] = f"gh-runner:{repo}"
     base_config["startedBy"] = general_data.get("GITHUB_ACTOR", "unknown")
     base_config["overrides"]["containerOverrides"][0]["environment"] = [
         {"name": "GITHUB_PERSONAL_TOKEN", "value": input_data["githubPat"]},
         {"name": "GITHUB_OWNER", "value": general_data["GITHUB_REPOSITORY_OWNER"]},
-        {"name": "GITHUB_REPOSITORY", "value": general_data["GITHUB_REPOSITORY"]},
+        {"name": "GITHUB_REPOSITORY", "value": repo},
         {"name": "RUNNER_NAME", "value": general_data["GITHUB_JOB"]},
     ]
     base_config["networkConfiguration"]["awsvpcConfiguration"]["subnets"] = input_data[
