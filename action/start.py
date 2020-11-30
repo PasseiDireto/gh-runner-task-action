@@ -4,6 +4,7 @@ Starts and Registers a GitHub Actions Self Hosted Runner using an ECS Task Defin
 
 import logging
 import os
+import sys
 
 from rich.console import Console
 from rich.logging import RichHandler
@@ -23,29 +24,42 @@ logging.basicConfig(
     handlers=[RichHandler(markup=True, rich_tracebacks=True)],
 )
 install()
+logger = logging.getLogger("main")
 
+if not __name__ == "__main__":
+    sys.exit(0)
 
-if __name__ == "__main__":
-    env = os.environ
-    input = Input(dict(env))  # pylint: disable=redefined-builtin
-    task_params_file = env.get("INPUT_TASK_PARAMS_FILE")
-    config = Config(task_params_file)
-    config.set(
-        **input.as_dict(),
-        group=f"gh-runner:{config.repository}",
-        startedBy=env.get("GITHUB_ACTOR", "UNKNOWN"),
-    )
-    config.set_container_env(
-        {
-            "GITHUB_PERSONAL_TOKEN": input["githubPat"],
-            "GITHUB_OWNER": env["GITHUB_REPOSITORY_OWNER"],
-            "GITHUB_REPOSITORY": config.repository,
-            "RUNNER_NAME": env["GITHUB_JOB"],
-        }
-    )
-    config.set_subnets(input.get("subnets"))
-    config.set_security_groups(input.get("securityGroups"))
-    task = Task(config)
-    task.run()
-    if input.should_wait:
-        task.wait()
+env = os.environ
+input = Input(dict(env))  # pylint: disable=redefined-builtin
+task_params_file = env.get("INPUT_TASK_PARAMS_FILE")
+config = Config(task_params_file)
+logger.info(
+    f"Start task execution with defition '{config.task_definition}' on cluster '{config.cluster}'"
+)
+config.set_repository(env.get("GITHUB_REPOSITORY"))
+config.set(
+    **input.as_dict(),
+    group=f"gh-runner:{config.repository}",
+    startedBy=env.get("GITHUB_ACTOR", "UNKNOWN"),
+)
+config.set_container_env(
+    {
+        "GITHUB_PERSONAL_TOKEN": input["githubPat"],
+        "GITHUB_OWNER": env["GITHUB_REPOSITORY_OWNER"],
+        "GITHUB_REPOSITORY": config.repository,
+        "RUNNER_NAME": env["GITHUB_JOB"],
+    }
+)
+config.set_subnets(input.get("subnets"))
+config.set_security_groups(input.get("securityGroups"))
+logger.info("Ready to execute with config:")
+logger.info(config.as_dict())
+
+task = Task(config)
+task.run()
+if input.should_wait:
+    task.wait()
+    logger.info(f"Runner ready to receive jobs: {task.task_arn}")
+
+logger.info("Task successfuly created.")
+logger.info(f"You can follow it on: {task.url}")

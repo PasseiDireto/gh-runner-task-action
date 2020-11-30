@@ -9,7 +9,7 @@ from typing import Optional
 class Config:
     """
     Represents the ECS Task Definition execution config. Basically represents the ECS.run_task() params:
-    https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.describe_tasks
+    https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.run_task
     """
 
     repository: str = ""
@@ -28,7 +28,7 @@ class Config:
             if key in self._config:
                 self._config[key] = value
 
-    def set_repo(self, env_repo: str):
+    def set_repository(self, env_repo: str):
         self.repository = env_repo.split("/")[1]
 
     def set_container_env(self, env_vars: dict):
@@ -55,6 +55,10 @@ class Config:
     @property
     def cluster(self):
         return self._config.get("cluster")
+
+    @property
+    def task_definition(self):
+        return self._config.get("taskDefinition")
 
     def __str__(self):
         return repr(self._config)
