@@ -47,7 +47,7 @@ if __name__ == "__main__":
     base_config["networkConfiguration"]["awsvpcConfiguration"]["subnets"] = input_data[
         "subnets"
     ].split(",")
-    if "securityGroups" in input_data:
+    if input_data.get("securityGroups"):
         base_config["networkConfiguration"]["awsvpcConfiguration"][
             "securityGroups"
         ] = input_data.get("securityGroups").split(",")
