@@ -13,7 +13,8 @@ jobs:
       with:
         github_pat: ${{ secrets.PD_BOT_GITHUB_ACCESS_TOKEN }}
         task_definition: 'gh-runner'
-        cluster: 'ops-jobs'
+        cluster: 'gh-runner'
+        capacity_provider: 'test-gh-runner'
         task_params_file: 'task-params-example.json'
         subnets: ${{ secrets.AWS_DEFAULT_SUBNETS }}
       env:

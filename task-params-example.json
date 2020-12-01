@@ -1,14 +1,13 @@
 {
   "count": 1,
   "enableECSManagedTags": true,
-  "launchType": "FARGATE",
-  "networkConfiguration": {
-    "awsvpcConfiguration": {
-      "subnets": [],
-      "securityGroups": [],
-      "assignPublicIp": "ENABLED"
+  "capacityProviderStrategy": [
+    {
+      "capacityProvider": "test-gh-runner",
+      "base": 0,
+      "weight": 1
     }
-  },
+  ],
   "overrides": {
     "containerOverrides": [
       {
@@ -27,7 +26,6 @@
   },
   "placementConstraints": [],
   "placementStrategy": [],
-  "platformVersion": "LATEST",
   "propagateTags": "TASK_DEFINITION",
   "referenceId": "",
   "startedBy": "",

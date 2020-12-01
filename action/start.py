@@ -30,14 +30,14 @@ def start():
     input = Input(dict(env))  # pylint: disable=redefined-builtin
     task_params_file = env.get("INPUT_TASK_PARAMS_FILE")
     config = TaskConfig(task_params_file)
-    logger.info(
-        f"Start task execution with defition '{config.task_definition}' on cluster '{config.cluster}'"
-    )
     config.set_repository(env["GITHUB_REPOSITORY"])
     config.set(
         **input.as_dict(),
         group=f"gh-runner:{config.repository}",
         startedBy=env.get("GITHUB_ACTOR", "UNKNOWN"),
+    )
+    logger.info(
+        f"Start task execution with defition '{config.task_definition}' on cluster '{config.cluster}'"
     )
     config.set_container_env(
         {
@@ -47,8 +47,7 @@ def start():
             "RUNNER_NAME": env["GITHUB_JOB"],
         }
     )
-    config.set_subnets(input.get("subnets"))
-    config.set_security_groups(input.get("securityGroups"))
+    config.set_capacity_provider(input.get("capacityProvider"))
     logger.info("Ready to execute with config:")
     logger.info(config.as_dict())
 

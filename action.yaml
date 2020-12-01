@@ -15,12 +15,9 @@ inputs:
     description: 'Whether the action should wait until the task is in state RUNNING before finishing'
     required: true
     default: 'true'
-  subnets:
-    description: 'comma separated list of subnets to attach into the execution'
+  capacity_provider:
+    description: 'The name of the desired Capacity Provider (attached to this cluster)'
     required: true
-  security_groups:
-    description: 'comma separated list of Security Groups to attach into the execution'
-    required: false
   task_role_arn:
     description: 'ARN of the role used to instantiate the task'
     required: false

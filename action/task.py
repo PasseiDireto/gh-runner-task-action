@@ -41,17 +41,8 @@ class TaskConfig:
             list_vars.append({"name": name, "value": value})
         self._config["overrides"]["containerOverrides"][0]["environment"] = list_vars
 
-    def set_subnets(self, subnets: str):
-        if subnets:
-            self._config["networkConfiguration"]["awsvpcConfiguration"][
-                "subnets"
-            ] = subnets.split(",")
-
-    def set_security_groups(self, security_groups: str):
-        if security_groups:
-            self._config["networkConfiguration"]["awsvpcConfiguration"][
-                "securityGroups"
-            ] = security_groups.split(",")
+    def set_capacity_provider(self, provider: str):
+        self._config["capacityProviderStrategy"][0]["capacityProvider"] = provider
 
     def as_dict(self):
         return self._config

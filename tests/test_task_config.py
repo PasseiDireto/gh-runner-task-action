@@ -10,7 +10,7 @@ def test_init_ok():
 def test_set_ok():
     config = TaskConfig()
     config.set(launchType="TEST", unknownParam=123)
-    assert config.as_dict()["launchType"] == "TEST"
+    assert len(config.as_dict()["capacityProviderStrategy"][0]) == 3
     assert "unknownParam" not in config.as_dict()
 
 
@@ -30,23 +30,7 @@ def test_env_var():
     )
 
 
-def test_subnets():
-    expected = ["sub1", "sub2"]
+def test_capacity_provider():
     config = TaskConfig()
-    config.set_subnets("sub1,sub2")
-    assert (
-        config.as_dict()["networkConfiguration"]["awsvpcConfiguration"]["subnets"]
-        == expected
-    )
-
-
-def test_security_groups():
-    expected = ["sg1", "sg2"]
-    config = TaskConfig()
-    config.set_security_groups("sg1,sg2")
-    assert (
-        config.as_dict()["networkConfiguration"]["awsvpcConfiguration"][
-            "securityGroups"
-        ]
-        == expected
-    )
+    config.set_capacity_provider("abc")
+    assert config.as_dict()["capacityProviderStrategy"][0]["capacityProvider"] == "abc"
