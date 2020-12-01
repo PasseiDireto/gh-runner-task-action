@@ -25,17 +25,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
             ${{ runner.os }}-
-      - name: Upgrade pip
+      - name: Upgrade pip and install deps
         run: |
           pip install pip --upgrade
-          pip install pip -r requirements/run.txt
+          pip install pip -r requirements/all.txt
       - name: Static Checker
-        run: |
-          pip install -r requirements/check.txt
-          make check
-      - name: Install dependencies
-        run: |
-          pip install -r requirements/test.txt
+        run: make check
       - name: Test with pytest
-        run: |
-          make test
+        run: make test
