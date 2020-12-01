@@ -35,12 +35,6 @@ class Input:
     def __getitem__(self, key):
         return self._inputs[key]
 
-    def __repr__(self):
-        return repr(self._inputs)
-
-    def __len__(self):
-        return len(self._inputs)
-
     def items(self):
         return self._inputs.items()
 

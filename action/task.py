@@ -1,12 +1,71 @@
 """
 ECS Task Execution related classes
 """
+import json
 import logging
+import os
 import time
+from typing import Optional
 
 import boto3
 
-from action.config import Config
+
+class TaskConfig:
+    """
+    Represents the ECS Task Definition execution config. Basically represents the ECS.run_task() params:
+    https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.run_task
+    """
+
+    repository: str = ""
+    wait: str = ""
+
+    def __init__(
+        self, task_params_file: Optional[str] = ""
+    ):  # pylint: disable=unsubscriptable-object
+        # https://github.com/PyCQA/pylint/issues/3882
+        self._config = json.loads(open("./task-params-template.json").read())
+        if task_params_file and os.path.exists(task_params_file):
+            self._config.update(json.loads(open(task_params_file).read()))
+
+    def set(self, **kwargs):
+        for key, value in kwargs.items():
+            if key in self._config:
+                self._config[key] = value
+
+    def set_repository(self, env_repo: str):
+        self.repository = env_repo.split("/")[-1]
+
+    def set_container_env(self, env_vars: dict):
+        list_vars = []
+        for name, value in env_vars.items():
+            list_vars.append({"name": name, "value": value})
+        self._config["overrides"]["containerOverrides"][0]["environment"] = list_vars
+
+    def set_subnets(self, subnets: str):
+        if subnets:
+            self._config["networkConfiguration"]["awsvpcConfiguration"][
+                "subnets"
+            ] = subnets.split(",")
+
+    def set_security_groups(self, security_groups: str):
+        if security_groups:
+            self._config["networkConfiguration"]["awsvpcConfiguration"][
+                "securityGroups"
+            ] = security_groups.split(",")
+
+    def as_dict(self):
+        return self._config
+
+    @property
+    def cluster(self):
+        return self._config.get("cluster")
+
+    @property
+    def task_definition(self):
+        return self._config.get("taskDefinition")
+
+    def __str__(self):
+        return repr(self._config)
 
 
 class Task:
@@ -18,7 +77,7 @@ class Task:
     retry_delay = 5
     desired_status = "RUNNING"
 
-    def __init__(self, config: Config):
+    def __init__(self, config: TaskConfig):
         self.config = config
         self.client = boto3.client("ecs")
         self.logger = logging.getLogger("Task")
