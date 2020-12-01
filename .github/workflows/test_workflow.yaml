@@ -22,10 +22,9 @@ jobs:
         AWS_DEFAULT_REGION:  ${{secrets.AWS_DEFAULT_REGION}}
   build:
     runs-on: self-hosted
+    container:
+      image: python:3.9-slim
     needs: pre-job-test
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-      with:
-        python-version: '3.9'
     - run: python --version
