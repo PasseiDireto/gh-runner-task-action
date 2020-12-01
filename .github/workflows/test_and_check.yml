@@ -28,6 +28,7 @@ jobs:
       - name: Upgrade pip
         run: |
           pip install pip --upgrade
+          pip install pip -r requirements/run.txt
       - name: Static Checker
         run: |
           pip install -r requirements/check.txt
