@@ -15,7 +15,6 @@ jobs:
         task_definition: 'gh-runner'
         cluster: 'gh-runner'
         task_params_file: 'task-params-example.json'
-        subnets: ${{ secrets.AWS_DEFAULT_SUBNETS }}
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.CDK_ACCESS_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.CDK_SECRET_KEY }}
