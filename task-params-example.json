@@ -3,7 +3,7 @@
   "enableECSManagedTags": true,
   "capacityProviderStrategy": [
     {
-      "capacityProvider": "test-gh-runner",
+      "capacityProvider": "test-gh-runner"
     }
   ],
   "overrides": {
