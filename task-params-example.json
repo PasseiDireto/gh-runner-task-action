@@ -4,8 +4,6 @@
   "capacityProviderStrategy": [
     {
       "capacityProvider": "test-gh-runner",
-      "base": 0,
-      "weight": 1
     }
   ],
   "overrides": {

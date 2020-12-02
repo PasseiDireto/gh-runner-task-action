@@ -18,6 +18,7 @@ inputs:
   capacity_provider:
     description: 'The name of the desired Capacity Provider (attached to this cluster)'
     required: true
+    default: 'default'
   task_role_arn:
     description: 'ARN of the role used to instantiate the task'
     required: false

@@ -4,9 +4,7 @@
   "enableECSManagedTags": true,
   "capacityProviderStrategy": [
     {
-      "capacityProvider": "",
-      "base": 0,
-      "weight": 1
+      "capacityProvider": ""
     }
   ],
   "overrides": {
