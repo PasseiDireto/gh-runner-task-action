@@ -1,7 +1,7 @@
 # Check if the action is actually working (Temporary)
 
 name: Run Action
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 jobs:
   pre-job-test:
     runs-on: ubuntu-latest
