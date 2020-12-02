@@ -10,7 +10,7 @@ def test_init_ok():
 def test_set_ok():
     config = TaskConfig()
     config.set(launchType="TEST", unknownParam=123)
-    assert len(config.as_dict()["capacityProviderStrategy"][0]) == 3
+    assert len(config.as_dict()["capacityProviderStrategy"][0]) == 1
     assert "unknownParam" not in config.as_dict()
 
 
