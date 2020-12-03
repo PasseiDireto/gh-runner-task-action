@@ -33,7 +33,7 @@ def start():
     config.set_repository(env["GITHUB_REPOSITORY"])
     config.set(
         **input.as_dict(),
-        group=f"gh-runner:{config.repository}",
+        group=config.repository,
         startedBy=env.get("GITHUB_ACTOR", "UNKNOWN"),
     )
     logger.info(
