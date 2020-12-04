@@ -38,4 +38,4 @@ jobs:
           docker tag passeidireto/gh-runner-task-action latest
           docker tag passeidireto/gh-runner-task-action ${GITHUB_REF/refs\/tags\/v/}
       - name: Docker Push
-        run: docker push passeidireto/gh-runner-task-action
+        run: docker push passeidireto/gh-runner-task-action -a
