@@ -34,4 +34,4 @@ outputs:
     description: 'The ID of the task in execution'
 runs:
   using: 'docker'
-  image: 'Dockerfile'
+  image: 'passeidireto/gh-runner-task-action'
