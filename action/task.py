@@ -60,7 +60,7 @@ class TaskConfig:
         return repr(self._config)
 
     def _default_template_file_path(self):
-        path = Path(os.getcwd())
+        path = Path(__file__).parent.parent.absolute()
         return path.joinpath("task-params-template.json")
 
 

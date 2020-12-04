@@ -1,14 +1,13 @@
 FROM python:3.9-alpine AS builder
 # https://jacobtomlinson.dev/posts/2019/creating-github-actions-in-python/
-ADD requirements/run.txt /app/requirements.txt
-WORKDIR /app
+
+COPY requirements/run.txt /action_workspace/run.txt
+
 ENV TERM "xterm-256color"
-RUN pip install pip --upgrade
-RUN pip install --target=/app -r requirements.txt
+RUN pip install -r /action_workspace/run.txt
 
-ADD . /app
+COPY . /action_workspace
+ENV PYTHONPATH /action_workspace
 
-WORKDIR /app
-ENV PYTHONPATH /app
+CMD ["python", "/action_workspace/action/start.py"]
 
-CMD ["python", "/app/action/start.py"]
