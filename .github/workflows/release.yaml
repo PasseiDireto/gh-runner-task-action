@@ -31,11 +31,12 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Docker Build
-        run: docker build -t passeidireto/gh-runner-task-action .
-      - name: Docker Tag
-        run: |
-          docker tag passeidireto/gh-runner-task-action passeidireto/gh-runner-task-action:latest
-          docker tag passeidireto/gh-runner-task-action passeidireto/gh-runner-task-action:${GITHUB_REF/refs\/tags\/v/}
-      - name: Docker Push
-        run: docker push passeidireto/gh-runner-task-action
+      - name: Find Git Tag
+        run: echo "TAG=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
+      - name: Docker Build and Push
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: |
+            passeidireto/gh-runner-task-action:latest
+            passeidireto/gh-runner-task-action:${{ env.TAG }}
