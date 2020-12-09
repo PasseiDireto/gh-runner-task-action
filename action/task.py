@@ -19,14 +19,14 @@ class TaskConfig:
 
     repository: str = ""
     wait: str = ""
+    logger = logging.getLogger("TaskConfig")
 
     def __init__(
         self, task_params_file: Optional[str] = ""
     ):  # pylint: disable=unsubscriptable-object
         # https://github.com/PyCQA/pylint/issues/3882
-        self._config = json.loads(open(self._default_template_file_path()).read())
-        if task_params_file and os.path.exists(task_params_file):
-            self._config.update(json.loads(open(task_params_file).read()))
+        self._config = self._default_template()
+        self._config.update(self._custom_template(task_params_file))
 
     def set(self, **kwargs):
         for key, value in kwargs.items():
@@ -59,9 +59,22 @@ class TaskConfig:
     def __str__(self):
         return repr(self._config)
 
-    def _default_template_file_path(self):
-        path = Path(__file__).parent.parent.absolute()
-        return path.joinpath("task-params-template.json")
+    def _default_template(self):
+        path = (
+            Path(__file__)
+            .parent.parent.absolute()
+            .joinpath("task-params-template.json")
+        )
+        return json.loads(open(path).read())
+
+    def _custom_template(
+        self, task_params_file: Optional[str]
+    ):  # pylint: disable=unsubscriptable-object
+        if task_params_file and os.path.exists(task_params_file):
+            self.logger.info(f"Using custom task definition from {task_params_file}")
+            return json.loads(open(task_params_file).read())
+        self.logger.info("No custom task definition file found")
+        return {}
 
 
 class Task:

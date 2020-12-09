@@ -12,14 +12,14 @@ from rich.traceback import install
 from action.params import Input
 from action.task import Task, TaskConfig
 
-console = Console()
+console = Console(width=120)
 
 FORMAT = "%(message)s"
 logging.basicConfig(
     level=logging.INFO,
     format=FORMAT,
     datefmt="[%X]",
-    handlers=[RichHandler(markup=True, rich_tracebacks=True)],
+    handlers=[RichHandler(markup=True, rich_tracebacks=True, console=console)],
 )
 install()
 logger = logging.getLogger("main")

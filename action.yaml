@@ -27,7 +27,7 @@ inputs:
     required: false
   task_params_file:
     description: 'JSON file (path) with extra configurations'
-    default: 'task-params.json'
+    default: '/github/workspace/task-params.json'
     required: false
 outputs:
   task_id:
