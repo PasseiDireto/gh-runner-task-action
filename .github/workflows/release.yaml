@@ -2,7 +2,7 @@ on:
   push:
     tags:
       - 'v*'
-name: Github release
+name: Docker/Github release
 jobs:
   github_release:
     name: Create github release
