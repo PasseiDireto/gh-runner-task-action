@@ -72,7 +72,7 @@ class TaskConfig:
             self.logger.info(f"Using custom task definition from {path}")
             return json.loads(open(task_params_file).read())
         self.logger.info(f"No custom task definition file found at {path}")
-        self.logger.info(f"Did you remember checking out your code first?")
+        self.logger.info("Did you remember checking out your code first?")
         return {}
 
 
