@@ -3,7 +3,6 @@ ECS Task Execution related classes
 """
 import json
 import logging
-import os
 import time
 from pathlib import Path
 from typing import Optional
@@ -67,13 +66,12 @@ class TaskConfig:
         )
         return json.loads(open(path).read())
 
-    def _custom_template(
-        self, task_params_file: Optional[str]
-    ):  # pylint: disable=unsubscriptable-object
-        if task_params_file and os.path.exists(task_params_file):
-            self.logger.info(f"Using custom task definition from {task_params_file}")
+    def _custom_template(self, task_params_file):
+        path = Path(task_params_file).absolute()
+        if path.is_file():
+            self.logger.info(f"Using custom task definition from {path}")
             return json.loads(open(task_params_file).read())
-        self.logger.info("No custom task definition file found")
+        self.logger.info(f"No custom task definition file found at {path}")
         return {}
 
 

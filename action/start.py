@@ -12,7 +12,7 @@ from rich.traceback import install
 from action.params import Input
 from action.task import Task, TaskConfig
 
-console = Console(width=120)
+console = Console(width=140)
 
 FORMAT = "%(message)s"
 logging.basicConfig(
