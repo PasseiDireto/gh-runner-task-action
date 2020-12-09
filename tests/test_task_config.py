@@ -30,6 +30,13 @@ def test_env_var():
     )
 
 
+def test_custom_task_params(tmpdir):
+    p = tmpdir.mkdir("sub").join("task-params.json")
+    p.write('{"cluster": "123a"}')
+    config = TaskConfig(task_params_file=p.realpath())
+    assert config.cluster == "123a"
+
+
 def test_capacity_provider():
     config = TaskConfig()
     config.set_capacity_provider("abc")
