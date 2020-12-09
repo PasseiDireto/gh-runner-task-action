@@ -1,3 +1,6 @@
+import os
+import pathlib
+
 from action.task import TaskConfig
 
 
@@ -31,10 +34,12 @@ def test_env_var():
 
 
 def test_custom_task_params(tmpdir):
-    p = tmpdir.mkdir("sub").join("task-params.json")
-    p.write('{"cluster": "123a"}')
-    config = TaskConfig(task_params_file=p.realpath())
+    p = pathlib.Path(os.getcwd()).joinpath("task-params.json")
+    p.touch()
+    p.write_text('{"cluster": "123a"}')
+    config = TaskConfig(task_params_file="task-params.json")
     assert config.cluster == "123a"
+    p.unlink()
 
 
 def test_capacity_provider():
