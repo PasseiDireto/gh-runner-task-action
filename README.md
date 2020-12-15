@@ -59,6 +59,7 @@ jobs:
         cluster: 'my-ecs-cluster'
 ```
 
+The [configure-aws-credentials](https://github.com/aws-actions/configure-aws-credentials) approach is a bit longer, but has some advantages of dealing with some edge cases, setting up more environment variables and working with the `assumeRole` feature. 
 
 Be aware that the `github_pat` can't be the default `secrets.GITHUB_TOKEN`, as it does not have enough permissions to register a new runner. More details are [provided here](https://github.com/PasseiDireto/gh-runner#personal-access-token-pat).
 
