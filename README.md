@@ -75,7 +75,7 @@ If you need custom configurations to be passed on `run_task`, you can have a jso
     task_params_file: './my-task-params-file.json' # the default name is 'task-params.json'
 ```
 
-You can also choose not to wait for the task to be running. It can be useful to spare some CI/CD minutes, but you'll need another mechanism to be sure your runner is available before running the actual job.
+You can also choose not to wait for the task to be running. It can be useful to spare some CI/CD minutes, but you'll need another mechanism to be sure your [runner is available](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-lifecycle.html) before running the actual job.
 
 ```yaml
 - name: Provide a self hosted to execute this job
