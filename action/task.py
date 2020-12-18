@@ -82,8 +82,9 @@ class Task:
     """
 
     task_arn = None
-    retry_delay = 5
+    retry_delay = 2
     desired_status = "RUNNING"
+    error_status = ["STOPPED"]
 
     def __init__(self, config: TaskConfig):
         self.config = config
@@ -103,14 +104,21 @@ class Task:
             f"Waiting for the task to reach '{self.desired_status}' status"
         )
 
-        status = "UNKNOWN"
+        status = self.get_task_status()
         while status != self.desired_status:
-            info = self.client.describe_tasks(
-                cluster=self.config.cluster, tasks=[self.task_arn]
-            )
-            status = info["tasks"][0]["lastStatus"]
+            status = self.get_task_status()
+            if status in self.error_status:
+                raise RuntimeError(
+                    f"Something went wrong starting the task. The status now is: '{status}'"
+                )
             self.logger.info(f"status still {status}. Waiting for 'RUNNING'")
             time.sleep(self.retry_delay)
+
+    def get_task_status(self) -> str:
+        info = self.client.describe_tasks(
+            cluster=self.config.cluster, tasks=[self.task_arn]
+        )
+        return info["tasks"][0]["lastStatus"]
 
     @property
     def url(self):

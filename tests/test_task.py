@@ -2,6 +2,7 @@ import json
 import os
 
 import boto3
+import mock
 import pytest
 from moto import mock_ec2, mock_ecs
 from moto.ec2 import utils as ec2_utils
@@ -49,3 +50,18 @@ def test_task_run(aws_credentials):
     assert task.task_arn
     assert task.task_id
     assert task.task_id in task.url
+
+
+@mock_ec2
+@mock_ecs
+@mock.patch("action.task.Task.run")
+@mock.patch("action.task.Task.get_task_status")
+def test_task_wait_failure(get_task_status, run, aws_credentials):
+    get_task_status.return_value = "STOPPED"
+    config = TaskConfig()
+    Task.retry_delay = 0
+    task = Task(config)
+    task.task_arn = "abc123"
+    task.run()
+    with pytest.raises(RuntimeError):
+        task.wait()
