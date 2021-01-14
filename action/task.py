@@ -5,7 +5,7 @@ import json
 import logging
 import time
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 import boto3
 
@@ -78,13 +78,13 @@ class TaskConfig:
 
 class Task:
     """
-    Represents a task ECS execution, based on a task definition.
+    Represents multiple task ECS execution, based on a task definition.
     """
 
-    task_arn = None
+    task_arns: List[str] = []
     retry_delay = 2
     desired_status = "RUNNING"
-    error_status = ["STOPPED"]
+    error_status = "STOPPED"
 
     def __init__(self, config: TaskConfig):
         self.config = config
@@ -94,37 +94,44 @@ class Task:
     def run(self):
         self.logger.info("Start task")
         response = self.client.run_task(**self.config.as_dict())
-        self.task_arn = response["tasks"][0]["taskArn"]
+        self.task_arns = [task["taskArn"] for task in response["tasks"]]
 
     def wait(self):
-        if not self.task_arn:
+        """
+        Wait for at least one job to be on the desired status. If one task fails before that, the whole procedure will
+        abort.
+        :raises: RuntimeError when a task placement fails
+        """
+        if not self.task_arns:
             self.logger.error("You can't 'wait' before calling run()")
             return
         self.logger.info(
-            f"Waiting for the task to reach '{self.desired_status}' status"
+            f"Waiting for the at least one task task to reach '{self.desired_status}' status"
         )
 
         status = self.get_task_status()
-        while status != self.desired_status:
+        while self.desired_status not in status:
             status = self.get_task_status()
-            if status in self.error_status:
+            if self.error_status in status:
                 raise RuntimeError(
                     f"Something went wrong starting the task. The status now is: '{status}'"
                 )
-            self.logger.info(f"status still {status}. Waiting for 'RUNNING'")
+            self.logger.info(
+                f"status are '{','.join(status)}'. Waiting for at least one  '{self.desired_status}'"
+            )
             time.sleep(self.retry_delay)
 
-    def get_task_status(self) -> str:
+    def get_task_status(self) -> List[str]:
         info = self.client.describe_tasks(
-            cluster=self.config.cluster, tasks=[self.task_arn]
+            cluster=self.config.cluster, tasks=self.task_arns
         )
-        return info["tasks"][0]["lastStatus"]
+        return [task["lastStatus"] for task in info["tasks"]]
 
     @property
     def url(self):
         base_url = "https://console.aws.amazon.com/ecs/home#/clusters"
-        return f"{base_url}/{self.config.cluster}/tasks/{self.task_id}/details"
+        return f"{base_url}/{self.config.cluster}/tasks/"
 
     @property
-    def task_id(self):
-        return self.task_arn.split("/")[-1]
+    def task_ids(self) -> List[str]:
+        return [task_arn.split("/")[-1] for task_arn in self.task_arns]

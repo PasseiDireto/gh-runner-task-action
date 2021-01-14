@@ -32,9 +32,12 @@ def start():
     config = TaskConfig(task_params_file)
     config.set_repository(env["GITHUB_REPOSITORY"])
     config.set(
-        **input.as_dict(),
-        group=config.repository,
-        startedBy=env.get("GITHUB_ACTOR", "UNKNOWN"),
+        **dict(
+            input.as_dict(),
+            group=config.repository,
+            startedBy=env.get("GITHUB_ACTOR", "UNKNOWN"),
+            count=int(env.get("INPUT_COUNT", 1)),
+        )
     )
     logger.info(
         f"Start task execution with defition '{config.task_definition}' on cluster '{config.cluster}'"
@@ -55,9 +58,12 @@ def start():
     task.run()
     if input.should_wait:
         task.wait()
-        logger.info(f"Runner ready to receive jobs: {task.task_arn}")
+        newline = "\n"
+        logger.info(
+            f"The following tasks were launched: \n{newline.join(task.task_arns)}"
+        )
 
-    logger.info("Task successfuly created.")
+    logger.info("Task(s) successfuly created.")
     logger.info(f"You can follow it on: {task.url}")
 
 
