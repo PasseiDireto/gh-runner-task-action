@@ -30,7 +30,7 @@ jobs:
     - name: Provide a self hosted to execute this job
       uses: PasseiDireto/gh-runner-task-action@main
       with:
-        github_pat: ${{ secrets.PD_BOT_GITHUB_ACCESS_TOKEN }}
+        github_pat: ${{ secrets.SPECIAL_ACESS_TOKEN }}
         task_definition: 'my-task-def'
         cluster: 'my-ecs-cluster'
   actual-job:
@@ -54,7 +54,7 @@ jobs:
         AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
         AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
       with:
-        github_pat: ${{ secrets.PD_BOT_GITHUB_ACCESS_TOKEN }}
+        github_pat: ${{ secrets.SPECIAL_ACESS_TOKEN }}
         task_definition: 'my-task-def'
         cluster: 'my-ecs-cluster'
 ```
@@ -69,7 +69,7 @@ If you need custom configurations to be passed on `run_task`, you can have a jso
 - name: Provide a self hosted to execute this job
   uses: PasseiDireto/gh-runner-task-action@main
   with:
-    github_pat: ${{ secrets.PD_BOT_GITHUB_ACCESS_TOKEN }}
+    github_pat: ${{ secrets.SPECIAL_ACESS_TOKEN }}
     task_definition: 'gh-runner'
     cluster: 'gh-runner'
     task_params_file: './my-task-params-file.json' # the default name is 'task-params.json'
@@ -81,7 +81,7 @@ You can also choose not to wait for the task to be running. It can be useful to 
 - name: Provide a self hosted to execute this job
   uses: PasseiDireto/gh-runner-task-action@main
   with:
-    github_pat: ${{ secrets.PD_BOT_GITHUB_ACCESS_TOKEN }}
+    github_pat: ${{ secrets.SPECIAL_ACESS_TOKEN }}
     task_definition: 'gh-runner'
     cluster: 'gh-runner'
     wait: false
@@ -89,6 +89,37 @@ You can also choose not to wait for the task to be running. It can be useful to 
 
 ## Approach
 The underlying code is basically a [call to boto3's run task](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.run_task). Since this call does not wait the task to be running (only placed) we need to be pooling against [describe tasks](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.describe_tasks) if we want to wait a running task. The params you specify will be merged with our [task-params-template.json](https://github.com/PasseiDireto/gh-runner-task-action/blob/main/task-params-example.json), with precedence.
+
+## Notes about waiting multiple tasks
+When you use `wait: true` (default) with `count > 1`, note that the action will wait for **at least one task to be ready.**
+It means you can have failures after that and the job you still be considered successful. However, if one failure is detected before
+any ready states, the execution will result in an error. If you don't want this behavior, the recommended way of having multiple tasks launched is [the matrix approach](https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix). 
+Then you can be sure all runners are ready before reaching the next step:
+
+```yaml
+jobs:
+  pre-job:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+          instances: [a, b, c] # three tasks will be launched
+    steps:
+    - name: Provide a self hosted to execute this job
+      uses: PasseiDireto/gh-runner-task-action@main
+      env:
+        AWS_ACCESS_ID: ${{ secrets.AWS_ACCESS_ID }}
+        AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+        AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+      with:
+        github_pat: ${{ secrets.PD_BOT_GITHUB_ACCESS_TOKEN }}
+        task_definition: 'my-task-def'
+        cluster: 'my-ecs-cluster'
+        wait: true # default
+        count: 1 # default
+```
+
+This is the intended behavior because as of now, GitHub expects at least one registered runner to [queue the jobs](https://docs.github.com/en/free-pro-team@latest/actions/hosting-your-own-runners/about-self-hosted-runners#usage-limits) and avoid failing with the message `No runner matching the specified labels was found: self-hosted`.
+It means that for most use cases waiting one runner to be available is enough, and the following jobs will wait for new runners. 
 
 ## Available Input
 
@@ -99,7 +130,8 @@ All the accepted variables are described in the `action.yaml` file. This table o
 | github_pat         | -                | yes      | GitHub Personal Access Token used in Runner Registration                           |
 | task_definition    | gh-runner        | no       | The name of the task definition                                                    |
 | cluster            | -                | yes      | The name of the ECS cluster where the task should be placed                        |
-| wait               | true             | no       | Whether the action should wait until the task is in state RUNNING before finishing |
+| count              | 1                | no       | Number of tasks that should be launched. Useful for matrix/parallel workflows      |
+| wait               | true             | no       | Whether the action should wait until at least one the task is in state RUNNING before finishing |
 | capacity_provider  | default          | no       | The name of the desired Capacity Provider (attached to this cluster)               |
 | task_role_arn      | -                | no       | ARN of the role used to instantiate the task                                       |
 | execution_role_arn | -                | no       | ARN of the role used during task execution                                         |
