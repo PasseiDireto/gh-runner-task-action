@@ -12,9 +12,13 @@ inputs:
     description: 'The name of the ECS cluster where the task should be placed'
     required: true
   wait:
-    description: 'Whether the action should wait until the task is in state RUNNING before finishing'
+    description: 'Whether the action should wait until at least one task is in state RUNNING before finishing'
     required: true
     default: 'true'
+  count:
+    description: 'How many task instances should be triggered'
+    required: true
+    default: '1'
   capacity_provider:
     description: 'The name of the desired Capacity Provider (attached to this cluster)'
     required: true

@@ -47,9 +47,8 @@ def test_task_run(aws_credentials):
     task = Task(config)
     task.run()
     task.wait()
-    assert task.task_arn
-    assert task.task_id
-    assert task.task_id in task.url
+    assert task.task_arns
+    assert task.task_ids
 
 
 @mock_ec2
@@ -61,7 +60,7 @@ def test_task_wait_failure(get_task_status, run, aws_credentials):
     config = TaskConfig()
     Task.retry_delay = 0
     task = Task(config)
-    task.task_arn = "abc123"
+    task.task_arns = ["abc123"]
     task.run()
     with pytest.raises(RuntimeError):
         task.wait()
