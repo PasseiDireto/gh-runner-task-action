@@ -87,6 +87,40 @@ You can also choose not to wait for the task to be running. It can be useful to 
     wait: false
 ```
 
+If you use [ephemeral runners](https://github.com/PasseiDireto/gh-runner), you will need to launch multiple tasks for to handle multiple jobs in the same workflow.
+Whether they are sequential, parallel or defined by the [the matrix approach](https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix),
+ you can use the `count` parameter to ensure multiple tasks being launched at the same API call:
+ 
+```yaml
+jobs:
+  pre-job:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Provide a self hosted to execute this job
+      uses: PasseiDireto/gh-runner-task-action@main
+      env:
+        AWS_ACCESS_ID: ${{ secrets.AWS_ACCESS_ID }}
+        AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+        AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+      with:
+        github_pat: ${{ secrets.PD_BOT_GITHUB_ACCESS_TOKEN }}
+        task_definition: 'my-task-def'
+        cluster: 'my-ecs-cluster'
+        count: 3
+  job1:
+    runs-on: self-hosted
+    needs: pre-job
+    ... 
+  job2:
+    runs-on: self-hosted
+    needs: pre-job
+    ... 
+  job3:
+    runs-on: self-hosted
+    needs: pre-job
+    ... 
+```
+
 ## Approach
 The underlying code is basically a [call to boto3's run task](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.run_task). Since this call does not wait the task to be running (only placed) we need to be pooling against [describe tasks](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.describe_tasks) if we want to wait a running task. The params you specify will be merged with our [task-params-template.json](https://github.com/PasseiDireto/gh-runner-task-action/blob/main/task-params-example.json), with precedence.
 
