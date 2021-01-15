@@ -4,8 +4,9 @@ ECS Task Execution related classes
 import json
 import logging
 import time
+from math import floor
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 import boto3
 
@@ -18,6 +19,7 @@ class TaskConfig:
 
     repository: str = ""
     wait: str = ""
+    task_count: int = 1
     logger = logging.getLogger("TaskConfig")
 
     def __init__(
@@ -85,16 +87,24 @@ class Task:
     retry_delay = 2
     desired_status = "RUNNING"
     error_status = "STOPPED"
+    max_count = 10
 
     def __init__(self, config: TaskConfig):
         self.config = config
         self.client = boto3.client("ecs")
         self.logger = logging.getLogger("Task")
 
-    def run(self):
+    def run(self) -> Tuple[int, int]:
+        """
+        Calls ECS API passing the desired params. Many calls will be made if task count is bigger than 10.
+        :return: A tuple (total_tasks_launched, total_api_calls_made).
+        """
         self.logger.info("Start task")
-        response = self.client.run_task(**self.config.as_dict())
-        self.task_arns = [task["taskArn"] for task in response["tasks"]]
+        sizes = self.get_batch_sizes()
+        for count in sizes:
+            response = self.client.run_task(**dict(self.config.as_dict(), count=count))
+            self.task_arns += [task["taskArn"] for task in response["tasks"]]
+        return sum(sizes), len(sizes)
 
     def wait(self):
         """
@@ -135,3 +145,15 @@ class Task:
     @property
     def task_ids(self) -> List[str]:
         return [task_arn.split("/")[-1] for task_arn in self.task_arns]
+
+    def get_batch_sizes(self) -> List[int]:
+        """
+        AWS ECS only allows up to 10 on 'count' in a single 'run_task' request. The solution is to break them
+        in smaller sequential requests, using this algorithm.
+        :return: list of the optimal 'counts' for each request.
+        """
+        total = self.config.task_count
+        batch_sizes = [self.max_count] * floor(total / self.max_count)
+        if total % self.max_count > 0:
+            batch_sizes.append(total % self.max_count)
+        return batch_sizes
