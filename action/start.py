@@ -32,15 +32,14 @@ def start():
     config = TaskConfig(task_params_file)
     config.set_repository(env["GITHUB_REPOSITORY"])
     config.set(
-        **dict(
-            input.as_dict(),
-            group=config.repository,
-            startedBy=env.get("GITHUB_ACTOR", "UNKNOWN"),
-            count=int(env.get("INPUT_COUNT", 1)),
-        )
+        **input.as_dict(),
+        group=config.repository,
+        startedBy=env.get("GITHUB_ACTOR", "UNKNOWN"),
     )
+    config.task_count = int(env.get("INPUT_TASK_COUNT", 1))
+
     logger.info(
-        f"Start task execution with defition '{config.task_definition}' on cluster '{config.cluster}'"
+        f"Start task execution with definition '{config.task_definition}' on cluster '{config.cluster}'"
     )
     config.set_container_env(
         {

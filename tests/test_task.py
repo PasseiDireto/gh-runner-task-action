@@ -43,12 +43,15 @@ def test_task_run(aws_credentials):
     ecs_init()
     config = TaskConfig()
     config.set(cluster="abc", taskDefinition="xyz")
+    config.task_count = 14
     Task.retry_delay = 0
     task = Task(config)
-    task.run()
+    task_count, api_calls_count = task.run()
     task.wait()
     assert task.task_arns
     assert task.task_ids
+    assert task_count == 14
+    assert api_calls_count == 2
 
 
 @mock_ec2
@@ -64,3 +67,22 @@ def test_task_wait_failure(get_task_status, run, aws_credentials):
     task.run()
     with pytest.raises(RuntimeError):
         task.wait()
+
+
+# Data for testing the right batch sizes from the total count asked.
+test_data = [
+    (34, [10, 10, 10, 4]),
+    (25, [10, 10, 5]),
+    (10, [10]),
+    (3, [3]),
+    (1, [1]),
+]
+
+
+@pytest.mark.parametrize("count,expected", test_data)
+def test_task_count_batch_size(count, expected):
+    config = TaskConfig()
+    config.set(cluster="abc", taskDefinition="xyz")
+    config.task_count = count
+    task = Task(config)
+    assert task.get_batch_sizes() == expected

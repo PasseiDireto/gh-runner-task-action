@@ -15,7 +15,7 @@ inputs:
     description: 'Whether the action should wait until at least one task is in state RUNNING before finishing'
     required: true
     default: 'true'
-  count:
+  task_count:
     description: 'How many task instances should be triggered'
     required: true
     default: '1'
