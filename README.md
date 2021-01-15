@@ -30,7 +30,7 @@ jobs:
     - name: Provide a self hosted to execute this job
       uses: PasseiDireto/gh-runner-task-action@main
       with:
-        github_pat: ${{ secrets.SPECIAL_ACESS_TOKEN }}
+        github_pat: ${{ secrets.SPECIAL_ACCESS_TOKEN }}
         task_definition: 'my-task-def'
         cluster: 'my-ecs-cluster'
   actual-job:
@@ -54,12 +54,12 @@ jobs:
         AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
         AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
       with:
-        github_pat: ${{ secrets.SPECIAL_ACESS_TOKEN }}
+        github_pat: ${{ secrets.SPECIAL_ACCESS_TOKEN }}
         task_definition: 'my-task-def'
         cluster: 'my-ecs-cluster'
 ```
 
-The [configure-aws-credentials](https://github.com/aws-actions/configure-aws-credentials) approach is a bit longer, but has some advantages of dealing with some edge cases, setting up more environment variables and working with the `assumeRole` feature. 
+The [configure-aws-credentials](https://github.com/aws-actions/configure-aws-credentials) approach is a bit longer, but has some advantages of dealing with some edge cases, setting up more environment variables and working with the `assumeRole` feature.
 
 Be aware that the `github_pat` can't be the default `secrets.GITHUB_TOKEN`, as it does not have enough permissions to register a new runner. More details are [provided here](https://github.com/PasseiDireto/gh-runner#personal-access-token-pat).
 
@@ -69,19 +69,19 @@ If you need custom configurations to be passed on `run_task`, you can have a jso
 - name: Provide a self hosted to execute this job
   uses: PasseiDireto/gh-runner-task-action@main
   with:
-    github_pat: ${{ secrets.SPECIAL_ACESS_TOKEN }}
+    github_pat: ${{ secrets.SPECIAL_ACCESS_TOKEN }}
     task_definition: 'gh-runner'
     cluster: 'gh-runner'
     task_params_file: './my-task-params-file.json' # the default name is 'task-params.json'
 ```
 
-You can also choose not to wait for the task to be running. It can be useful to spare some CI/CD minutes, but you'll need another mechanism to be sure your [runner is available](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-lifecycle.html) before running the actual job.
+You can also choose not to wait for the task to be running. It can be useful to spare some CI/CD minutes, but you'll need another mechanism to be sure your [runner is available](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-lifecycle.html) before running the actual job. If no self-hosted runners are available when the job starts, you will face the `No runner matching the specified labels was found: self-hosted` error. Still, this option is useful for usecases where you have at least one long running executor registered at repository or organization level.
 
 ```yaml
 - name: Provide a self hosted to execute this job
   uses: PasseiDireto/gh-runner-task-action@main
   with:
-    github_pat: ${{ secrets.SPECIAL_ACESS_TOKEN }}
+    github_pat: ${{ secrets.SPECIAL_ACCESS_TOKEN }}
     task_definition: 'gh-runner'
     cluster: 'gh-runner'
     wait: false
@@ -90,7 +90,7 @@ You can also choose not to wait for the task to be running. It can be useful to 
 If you use [ephemeral runners](https://github.com/PasseiDireto/gh-runner), you will need to launch multiple tasks for to handle multiple jobs in the same workflow.
 Whether they are sequential, parallel or defined by the [the matrix approach](https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix),
  you can use the `count` parameter to ensure multiple tasks being launched at the same API call:
- 
+
 ```yaml
 jobs:
   pre-job:
@@ -110,15 +110,15 @@ jobs:
   job1:
     runs-on: self-hosted
     needs: pre-job
-    ... 
+    ...
   job2:
     runs-on: self-hosted
     needs: pre-job
-    ... 
+    ...
   job3:
     runs-on: self-hosted
     needs: pre-job
-    ... 
+    ...
 ```
 
 ## Approach
@@ -127,7 +127,7 @@ The underlying code is basically a [call to boto3's run task](https://boto3.amaz
 ## Notes about waiting multiple tasks
 When you use `wait: true` (default) with `count > 1`, note that the action will wait for **at least one task to be ready.**
 It means you can have failures after that and the job you still be considered successful. However, if one failure is detected before
-any ready states, the execution will result in an error. If you don't want this behavior, the recommended way of having multiple tasks launched is [the matrix approach](https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix). 
+any ready states, the execution will result in an error. If you don't want this behavior, the recommended way of having multiple tasks launched is [the matrix approach](https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix).
 Then you can be sure all runners are ready before reaching the next step:
 
 ```yaml
@@ -153,7 +153,7 @@ jobs:
 ```
 
 This is the intended behavior because as of now, GitHub expects at least one registered runner to [queue the jobs](https://docs.github.com/en/free-pro-team@latest/actions/hosting-your-own-runners/about-self-hosted-runners#usage-limits) and avoid failing with the message `No runner matching the specified labels was found: self-hosted`.
-It means that for most use cases waiting one runner to be available is enough, and the following jobs will wait for new runners. 
+It means that for most use cases waiting one runner to be available is enough, and the following jobs will wait for new runners.
 
 ## Available Input
 
