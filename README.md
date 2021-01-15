@@ -103,7 +103,7 @@ jobs:
         AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
         AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
       with:
-        github_pat: ${{ secrets.PD_BOT_GITHUB_ACCESS_TOKEN }}
+        github_pat: ${{ secrets.SPECIAL_ACCESS_TOKEN }}
         task_definition: 'my-task-def'
         cluster: 'my-ecs-cluster'
         count: 3
