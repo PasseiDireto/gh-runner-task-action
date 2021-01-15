@@ -89,7 +89,7 @@ You can also choose not to wait for the task to be running. It can be useful to 
 
 If you use [ephemeral runners](https://github.com/PasseiDireto/gh-runner), you will need to launch multiple tasks for to handle multiple jobs in the same workflow.
 Whether they are sequential, parallel or defined by the [the matrix approach](https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix),
- you can use the `count` parameter to ensure multiple tasks being launched at the same API call:
+ you can use the `task_count` parameter to ensure multiple tasks being launched at the same API call:
 
 ```yaml
 jobs:
@@ -106,7 +106,7 @@ jobs:
         github_pat: ${{ secrets.SPECIAL_ACCESS_TOKEN }}
         task_definition: 'my-task-def'
         cluster: 'my-ecs-cluster'
-        count: 3
+        task_count: 3
   job1:
     runs-on: self-hosted
     needs: pre-job
@@ -121,11 +121,14 @@ jobs:
     ...
 ```
 
+Note that currently ECS `run_task` call is [limited to 10](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.run_task). It means the action will perform several calls if you pass a `task_count`
+bigger than that. If you use `wait: true` (default) you can call up to 100 tasks,
+since the `describe_task` method [has a 100 limit](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.describe_tasks) and we use it to watch for the state of the launched tasks. 
 ## Approach
 The underlying code is basically a [call to boto3's run task](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.run_task). Since this call does not wait the task to be running (only placed) we need to be pooling against [describe tasks](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.describe_tasks) if we want to wait a running task. The params you specify will be merged with our [task-params-template.json](https://github.com/PasseiDireto/gh-runner-task-action/blob/main/task-params-example.json), with precedence.
 
 ## Notes about waiting multiple tasks
-When you use `wait: true` (default) with `count > 1`, note that the action will wait for **at least one task to be ready.**
+When you use `wait: true` (default) with `task_count > 1`, note that the action will wait for **at least one task to be ready.**
 It means you can have failures after that and the job you still be considered successful. However, if one failure is detected before
 any ready states, the execution will result in an error. If you don't want this behavior, the recommended way of having multiple tasks launched is [the matrix approach](https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix).
 Then you can be sure all runners are ready before reaching the next step:
@@ -149,7 +152,7 @@ jobs:
         task_definition: 'my-task-def'
         cluster: 'my-ecs-cluster'
         wait: true # default
-        count: 1 # default
+        task_count: 1 # default
 ```
 
 This is the intended behavior because as of now, GitHub expects at least one registered runner to [queue the jobs](https://docs.github.com/en/free-pro-team@latest/actions/hosting-your-own-runners/about-self-hosted-runners#usage-limits) and avoid failing with the message `No runner matching the specified labels was found: self-hosted`.
@@ -164,7 +167,7 @@ All the accepted variables are described in the `action.yaml` file. This table o
 | github_pat         | -                | yes      | GitHub Personal Access Token used in Runner Registration                           |
 | task_definition    | gh-runner        | no       | The name of the task definition                                                    |
 | cluster            | -                | yes      | The name of the ECS cluster where the task should be placed                        |
-| count              | 1                | no       | Number of tasks that should be launched. Useful for matrix/parallel workflows      |
+| task_count              | 1           | no       | Number of tasks that should be launched. Useful for matrix/parallel workflows. Up to 100.      |
 | wait               | true             | no       | Whether the action should wait until at least one the task is in state RUNNING before finishing |
 | capacity_provider  | default          | no       | The name of the desired Capacity Provider (attached to this cluster)               |
 | task_role_arn      | -                | no       | ARN of the role used to instantiate the task                                       |
