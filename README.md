@@ -39,6 +39,28 @@ jobs:
      steps:
        - run: python --version
 ```
+You can also configure the credentials using the [`assume-role` directive](https://github.com/aws-actions/configure-aws-credentials#assuming-a-role). [Like that](https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html) you will have a well delimited scope for your action, increasing overall security and avoiding dangerous actions:
+
+```yaml
+pre-job:
+  runs-on: ubuntu-latest
+  steps:
+  - name: Configure AWS Credentials
+    uses: aws-actions/configure-aws-credentials@v1
+    with:
+      aws-access-key-id: ${{ secrets.AWS_ACCESS_ID }}
+      aws-secret-access-key: ${{ secrets.AWS_ACCESS_KEY }}
+      aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+      role-to-assume: ${{ secrets.YOUR_DELIMITED_ROLE_ARN }}
+      role-duration-seconds: 1200 # default
+  - name: Provide a self hosted to execute this job
+    uses: PasseiDireto/gh-runner-task-action@main
+    with:
+      github_pat: ${{ secrets.SPECIAL_ACCESS_TOKEN }}
+      task_definition: 'my-task-def'
+      cluster: 'my-ecs-cluster'
+```
+
 
 Note that the second job has some particular tags: `runs-on` is set to `self-hosted`, while the `needs: pre-job` forces GitHub finish the first job successfully before starting the `actual-job`. If you don't want to use the official `configure-aws-credentials` action, you can also set the needed AWS env variables on the same step:
 
@@ -123,7 +145,7 @@ jobs:
 
 Note that currently ECS `run_task` call is [limited to 10](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.run_task). It means the action will perform several calls if you pass a `task_count`
 bigger than that. If you use `wait: true` (default) you can call up to 100 tasks,
-since the `describe_task` method [has a 100 limit](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.describe_tasks) and we use it to watch for the state of the launched tasks. 
+since the `describe_task` method [has a 100 limit](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.describe_tasks) and we use it to watch for the state of the launched tasks.
 ## Approach
 The underlying code is basically a [call to boto3's run task](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.run_task). Since this call does not wait the task to be running (only placed) we need to be pooling against [describe tasks](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.describe_tasks) if we want to wait a running task. The params you specify will be merged with our [task-params-template.json](https://github.com/PasseiDireto/gh-runner-task-action/blob/main/task-params-example.json), with precedence.
 
