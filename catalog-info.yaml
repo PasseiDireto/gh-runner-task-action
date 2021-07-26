@@ -1,0 +1,18 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: gh-runner-task-action
+  description: Action to start self hosted GitHub Runners
+  labels:
+    system: github-actions
+  annotations:
+    github.com/project-slug: PasseiDireto/gh-runner-task-action
+    backstage.io/github-actions-id: PasseiDireto/gh-runner-task-action
+    backstage.io/techdocs-ref: github:https://github.com/PasseiDireto/gh-runner-task-action
+  tags:
+    - python
+    - action
+spec:
+  type: library
+  lifecycle: production
+  owner: data
