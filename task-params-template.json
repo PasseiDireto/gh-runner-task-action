@@ -3,11 +3,6 @@
   "count": 1,
   "group": "",
   "enableECSManagedTags": true,
-  "capacityProviderStrategy": [
-    {
-      "capacityProvider": ""
-    }
-  ],
   "overrides": {
     "containerOverrides": [
       {
