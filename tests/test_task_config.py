@@ -12,8 +12,8 @@ def test_init_ok():
 
 def test_set_ok():
     config = TaskConfig()
-    config.set(launchType="TEST", unknownParam=123)
-    assert len(config.as_dict()["capacityProviderStrategy"][0]) == 1
+    config.set(group="TEST", unknownParam=123)
+    assert config.as_dict()["group"] == "TEST"
     assert "unknownParam" not in config.as_dict()
 
 
@@ -46,3 +46,9 @@ def test_capacity_provider():
     config = TaskConfig()
     config.set_capacity_provider("abc")
     assert config.as_dict()["capacityProviderStrategy"][0]["capacityProvider"] == "abc"
+
+
+def test_empty_capacity_provider():
+    config = TaskConfig()
+    config.set_capacity_provider(None)
+    assert "capacityProviderStrategy" not in config.as_dict()

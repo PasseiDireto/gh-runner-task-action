@@ -4,3 +4,4 @@
 .coverage
 .pytest_cache
 *.egg-info/
+venv

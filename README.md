@@ -191,7 +191,7 @@ All the accepted variables are described in the `action.yaml` file. This table o
 | cluster            | -                | yes      | The name of the ECS cluster where the task should be placed                        |
 | task_count              | 1           | no       | Number of tasks that should be launched. Useful for matrix/parallel workflows. Up to 100.      |
 | wait               | true             | no       | Whether the action should wait until at least one the task is in state RUNNING before finishing |
-| capacity_provider  | default          | no       | The name of the desired Capacity Provider (attached to this cluster)               |
+| capacity_provider  | -          | no       | The name of the desired Capacity Provider (attached to this cluster)               |
 | task_role_arn      | -                | no       | ARN of the role used to instantiate the task                                       |
 | execution_role_arn | -                | no       | ARN of the role used during task execution                                         |
 | task_params_file   | task-params.json | no       | JSON file (path) with extra configurations                                         |

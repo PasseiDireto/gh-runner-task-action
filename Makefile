@@ -4,7 +4,7 @@ prepare:
 	@mypy
 	@pylint action
 	@flake8 .
-	@bandit -r .
+	@bandit -r action
 	@echo Good to Go!
 
 check:
@@ -13,7 +13,7 @@ check:
 	@mypy
 	@flake8 .
 	@pylint action
-	@bandit -r .
+	@bandit -r action
 	@echo Good to Go!
 
 test:

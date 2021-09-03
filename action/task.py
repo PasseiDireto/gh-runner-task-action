@@ -43,8 +43,9 @@ class TaskConfig:
             list_vars.append({"name": name, "value": value})
         self._config["overrides"]["containerOverrides"][0]["environment"] = list_vars
 
-    def set_capacity_provider(self, provider: str):
-        self._config["capacityProviderStrategy"][0]["capacityProvider"] = provider
+    def set_capacity_provider(self, provider: str = None):
+        if provider:
+            self._config["capacityProviderStrategy"] = [{"capacityProvider": provider}]
 
     def as_dict(self):
         return self._config
