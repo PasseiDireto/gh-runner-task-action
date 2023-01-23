@@ -47,6 +47,7 @@ def start():
             "GITHUB_OWNER": env["GITHUB_REPOSITORY_OWNER"],
             "GITHUB_REPOSITORY": config.repository,
             "RUNNER_NAME": env["GITHUB_JOB"],
+            "ACTIONS_RUNNER_PRINT_LOG_TO_STDOUT": 1,
         }
     )
     config.set_capacity_provider(input.get("capacityProvider"))
